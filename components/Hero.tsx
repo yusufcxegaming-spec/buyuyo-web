@@ -1,15 +1,17 @@
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { motion, useReducedMotion, useInView } from 'framer-motion';
+import { useRef, useMemo } from 'react';
 
-const floatingEmojis = [
-  { emoji: '⭐', top: '15%', left: '8%', delay: 0, duration: 6 },
-  { emoji: '🌙', top: '70%', left: '5%', delay: 1.5, duration: 7 },
-  { emoji: '🎵', top: '25%', right: '7%', delay: 0.8, duration: 5.5 },
-  { emoji: '🌈', top: '65%', right: '9%', delay: 2, duration: 8 },
-  { emoji: '💛', top: '45%', left: '3%', delay: 1, duration: 6.5 },
-  { emoji: '🌸', top: '80%', right: '12%', delay: 0.5, duration: 7.5 },
-];
+const STARS = Array.from({ length: 80 }, (_, i) => ({
+  id: i,
+  top: `${Math.random() * 100}%`,
+  left: `${Math.random() * 100}%`,
+  size: Math.random() * 2.5 + 1,
+  duration: Math.random() * 20 + 15,
+  delay: Math.random() * 20,
+  slow: i % 3 === 0,
+}));
 
 const stats = [
   { value: '50K+', label: 'Mutlu Ebeveyn' },
@@ -20,6 +22,8 @@ const stats = [
 
 export default function Hero() {
   const prefersReducedMotion = useReducedMotion();
+  const statsRef = useRef(null);
+  const statsInView = useInView(statsRef, { once: true });
 
   const containerVariants = {
     hidden: {},
@@ -33,23 +37,36 @@ export default function Hero() {
 
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-hero-gradient pt-20 pb-16">
-      {/* Background orbs */}
-      <div className="orb w-[600px] h-[600px] bg-primary-light top-[-100px] left-[-150px]" />
-      <div className="orb w-[500px] h-[500px] bg-buyuyo-pink_accent top-[30%] right-[-100px] opacity-10" />
-      <div className="orb w-[400px] h-[400px] bg-buyuyo-sky bottom-[-50px] left-[20%] opacity-10" />
 
-      {/* Floating emoji decorations */}
-      {!prefersReducedMotion && floatingEmojis.map((item, i) => (
-        <motion.div
-          key={i}
-          className="absolute text-2xl pointer-events-none select-none hidden sm:block"
-          style={{ top: item.top, left: item.left, right: item.right }}
-          animate={{ y: [0, -20, 0] }}
-          transition={{ duration: item.duration, delay: item.delay, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          {item.emoji}
-        </motion.div>
+      {/* Animated star field */}
+      {!prefersReducedMotion && STARS.map(s => (
+        <span
+          key={s.id}
+          className={`star ${s.slow ? 'star-slow' : ''} pointer-events-none`}
+          style={{
+            top: s.top,
+            left: s.left,
+            width: s.size,
+            height: s.size,
+            animationDuration: `${s.duration}s`,
+            animationDelay: `${s.delay}s`,
+          }}
+        />
       ))}
+
+      {/* Breathing orbs */}
+      <div
+        className="orb orb-breathe w-[600px] h-[600px] bg-primary-light"
+        style={{ top: -100, left: -150, animationDuration: '7s' }}
+      />
+      <div
+        className="orb orb-breathe w-[500px] h-[500px] bg-[#EC4899]"
+        style={{ top: '30%', right: -100, animationDuration: '9s', animationDelay: '2s' }}
+      />
+      <div
+        className="orb orb-breathe w-[400px] h-[400px] bg-[#38BDF8]"
+        style={{ bottom: -50, left: '20%', animationDuration: '11s', animationDelay: '4s' }}
+      />
 
       {/* Hero content */}
       <motion.div
@@ -126,10 +143,9 @@ export default function Hero() {
           </motion.a>
         </motion.div>
 
-        {/* Download section anchor */}
         <div id="download" />
 
-        {/* Hero mockup */}
+        {/* Phone mockup */}
         <motion.div
           variants={itemVariants}
           className="relative mx-auto"
@@ -140,16 +156,12 @@ export default function Hero() {
             transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
             className="relative"
           >
-            {/* Phone frame */}
             <div className="relative mx-auto w-72 sm:w-80 bg-dark-mid rounded-[3rem] p-3 shadow-[0_40px_80px_rgba(0,0,0,0.5)] border border-white/10">
               <div className="bg-surface rounded-[2.5rem] overflow-hidden">
-                {/* Status bar notch */}
                 <div className="bg-dark-mid h-7 flex items-center justify-center">
                   <div className="w-20 h-4 bg-dark rounded-full" />
                 </div>
-                {/* App screen mockup */}
                 <div className="bg-[#F8F7FF] px-4 pb-4 pt-3 min-h-[420px]">
-                  {/* Header */}
                   <div className="flex items-center justify-between mb-4">
                     <div>
                       <p className="font-body text-xs text-gray-400">Merhaba! 👋</p>
@@ -162,7 +174,6 @@ export default function Hero() {
                       <p className="font-body text-[10px] text-gray-400">gün</p>
                     </div>
                   </div>
-                  {/* Coach banner */}
                   <div className="bg-primary rounded-2xl p-3 mb-4 flex items-center justify-between shadow-glow">
                     <div>
                       <p className="font-heading font-800 text-sm text-white">AI Koç</p>
@@ -170,7 +181,6 @@ export default function Hero() {
                     </div>
                     <span className="text-2xl">🤖</span>
                   </div>
-                  {/* Module grid */}
                   <p className="font-heading font-700 text-sm text-dark mb-3">Modüller</p>
                   <div className="grid grid-cols-2 gap-2">
                     {[
@@ -179,11 +189,7 @@ export default function Hero() {
                       { emoji: '🎵', title: 'Ninniler', bg: '#FCE7F3', color: '#DB2777' },
                       { emoji: '📈', title: 'Gelişim', bg: '#D1FAE5', color: '#059669' },
                     ].map((m) => (
-                      <div
-                        key={m.title}
-                        className="rounded-2xl p-3 shadow-card"
-                        style={{ backgroundColor: m.bg }}
-                      >
+                      <div key={m.title} className="rounded-2xl p-3 shadow-card" style={{ backgroundColor: m.bg }}>
                         <p className="text-2xl mb-1">{m.emoji}</p>
                         <p className="font-heading font-700 text-xs" style={{ color: m.color }}>{m.title}</p>
                       </div>
@@ -194,31 +200,35 @@ export default function Hero() {
             </div>
           </motion.div>
 
-          {/* Floating badges around phone */}
+          {/* Scroll-reveal side badges */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
+            initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 1.2, duration: 0.6 }}
-            className="absolute -left-4 sm:-left-10 top-16 glass rounded-2xl px-3 py-2 shadow-soft hidden sm:block"
+            transition={{ delay: 1.2, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute -left-4 sm:-left-12 top-16 glass rounded-2xl px-4 py-2.5 shadow-soft hidden sm:flex items-center gap-2"
           >
-            <p className="text-lg">🔥 7 gün seri!</p>
+            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+            <p className="font-heading font-700 text-sm text-dark">7 gün serisi</p>
           </motion.div>
+
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 1.5, duration: 0.6 }}
-            className="absolute -right-4 sm:-right-10 top-32 glass rounded-2xl px-3 py-2 shadow-soft hidden sm:block"
+            transition={{ delay: 1.5, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute -right-4 sm:-right-12 top-32 glass rounded-2xl px-4 py-2.5 shadow-soft hidden sm:flex items-center gap-2"
           >
-            <p className="text-lg">✅ Ders tamamlandı!</p>
+            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <p className="font-heading font-700 text-sm text-dark">Ders tamamlandı</p>
           </motion.div>
         </motion.div>
       </motion.div>
 
       {/* Stats bar */}
       <motion.div
+        ref={statsRef}
         initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        animate={statsInView ? { opacity: 1, y: 0 } : {}}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="relative z-10 w-full max-w-4xl mx-auto px-6 mt-16"
       >
         <div className="glass-dark rounded-3xl px-6 py-6 grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -226,13 +236,11 @@ export default function Hero() {
             <motion.div
               key={stat.label}
               initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1 + i * 0.1 }}
+              animate={statsInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ delay: i * 0.1 }}
               className="text-center"
             >
-              <p className="font-heading font-900 text-2xl sm:text-3xl text-white mb-1">
-                {stat.value}
-              </p>
+              <p className="font-heading font-900 text-2xl sm:text-3xl text-white mb-1">{stat.value}</p>
               <p className="font-body text-xs sm:text-sm text-white/50">{stat.label}</p>
             </motion.div>
           ))}

@@ -100,3 +100,49 @@ h1, h2, h3, h4, h5, h6 {
   background: #818CF8;
   color: white;
 }
+
+/* Star drift */
+@keyframes star-drift {
+  0%   { transform: translateX(0) translateY(0); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateX(-120px) translateY(-60px); opacity: 0; }
+}
+
+@keyframes star-drift-slow {
+  0%   { transform: translateX(0) translateY(0); opacity: 0; }
+  10%  { opacity: 0.6; }
+  90%  { opacity: 0.6; }
+  100% { transform: translateX(-80px) translateY(-100px); opacity: 0; }
+}
+
+@keyframes orb-breathe {
+  0%, 100% { transform: scale(1); opacity: 0.12; }
+  50%       { transform: scale(1.15); opacity: 0.2; }
+}
+
+@keyframes float-in-left {
+  from { transform: translateX(-60px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes float-in-right {
+  from { transform: translateX(60px); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+.star {
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  will-change: transform, opacity;
+  animation: star-drift linear infinite;
+}
+
+.star-slow {
+  animation-name: star-drift-slow;
+}
+
+.orb-breathe {
+  animation: orb-breathe ease-in-out infinite;
+}
