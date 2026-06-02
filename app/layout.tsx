@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { ModalProvider } from '@/components/ModalContext';
 
 export const metadata: Metadata = {
   title: 'Büyüyo — Bebeğinizin Gelişim Yolcuğu',
@@ -24,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body><ModalProvider>{children}</ModalProvider></body>
     </html>
   );
 }

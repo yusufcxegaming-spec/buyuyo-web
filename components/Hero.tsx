@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion, useInView } from 'framer-motion';
 import { useRef, useMemo } from 'react';
+import { useModal } from './ModalContext';
 
 const STARS = Array.from({ length: 80 }, (_, i) => ({
   id: i,
@@ -22,6 +23,7 @@ const stats = [
 
 export default function Hero() {
   const prefersReducedMotion = useReducedMotion();
+  const { open } = useModal();
   const statsRef = useRef(null);
   const statsInView = useInView(statsRef, { once: true });
 
@@ -125,14 +127,14 @@ export default function Hero() {
 
         {/* CTA buttons */}
         <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-14">
-          <motion.a
-            href="#download"
+          <motion.button
+            onClick={open}
             whileHover={{ scale: 1.05, boxShadow: '0 12px 40px rgba(255,255,255,0.3)' }}
             whileTap={{ scale: 0.97 }}
             className="font-heading font-800 text-base text-primary bg-white px-8 py-4 rounded-full shadow-xl w-full sm:w-auto text-center flex items-center justify-center gap-2"
           >
-            <span>🤖</span> Google Play'den İndir
-          </motion.a>
+            Ücretsiz Başla 🚀
+          </motion.button>
           <motion.a
             href="#features"
             whileHover={{ scale: 1.03 }}

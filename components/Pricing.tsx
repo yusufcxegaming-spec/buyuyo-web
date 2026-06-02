@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useModal } from './ModalContext';
 
 const freeFeatures = [
   { text: 'Beslenme rehberi (temel)', included: true },
@@ -50,6 +51,7 @@ const testimonials = [
 
 export default function Pricing() {
   const [yearly, setYearly] = useState(true);
+  const { open } = useModal();
 
   const monthlyPrice = yearly ? '₺49' : '₺99';
   const yearlyTotal = yearly ? '₺599' : '';
@@ -139,14 +141,14 @@ export default function Pricing() {
               ))}
             </div>
 
-            <motion.a
-              href="#"
+            <motion.button
+              onClick={open}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="font-heading font-700 text-sm text-primary border-2 border-primary px-6 py-3.5 rounded-2xl text-center hover:bg-primary-50 transition-colors"
             >
               Ücretsiz Başla
-            </motion.a>
+            </motion.button>
           </motion.div>
 
           {/* Premium */}
@@ -202,14 +204,14 @@ export default function Pricing() {
               ))}
             </div>
 
-            <motion.a
-              href="#"
+            <motion.button
+              onClick={open}
               whileHover={{ scale: 1.03, boxShadow: '0 12px 40px rgba(255,255,255,0.2)' }}
               whileTap={{ scale: 0.97 }}
               className="relative font-heading font-800 text-sm text-primary bg-white px-6 py-3.5 rounded-2xl text-center shadow-xl"
             >
               Premium'a Geç 👑
-            </motion.a>
+            </motion.button>
           </motion.div>
         </div>
 
