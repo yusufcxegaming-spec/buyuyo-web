@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 
 const links = {
@@ -9,6 +10,24 @@ const links = {
 };
 
 export default function Footer() {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<'idle' | 'loading' | 'ok' | 'error'>('idle');
+
+  const subscribe = async () => {
+    if (!email) return;
+    setStatus('loading');
+    try {
+      const res = await fetch('https://formspree.io/f/xdavnaol', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      setStatus(res.ok ? 'ok' : 'error');
+    } catch {
+      setStatus('error');
+    }
+  };
+
   return (
     <footer className="bg-dark pt-20 pb-10 px-6 relative overflow-hidden">
       {/* Background orb */}
@@ -70,18 +89,28 @@ export default function Footer() {
             <p className="font-body text-sm text-white/50">Bebeğinizin yaşına özel haftalık ipuçları alın</p>
           </div>
           <div className="flex gap-2 w-full sm:w-auto">
-            <input
-              type="email"
-              placeholder="E-posta adresiniz"
-              className="flex-1 sm:w-64 bg-white/10 border border-white/10 rounded-xl px-4 py-2.5 font-body text-sm text-white placeholder-white/30 outline-none focus:border-primary transition-colors"
-            />
-            <motion.button
-              whileHover={{ scale: 1.04, boxShadow: '0 6px 24px rgba(79,70,229,0.5)' }}
-              whileTap={{ scale: 0.97 }}
-              className="font-heading font-700 text-sm text-white bg-primary px-5 py-2.5 rounded-xl shadow-glow whitespace-nowrap"
-            >
-              Abone Ol
-            </motion.button>
+            {status === 'ok' ? (
+              <p className="font-heading font-700 text-sm text-green-400 py-2.5">✅ Abone oldunuz, teşekkürler!</p>
+            ) : (
+              <>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="E-posta adresiniz"
+                  className="flex-1 sm:w-64 bg-white/10 border border-white/10 rounded-xl px-4 py-2.5 font-body text-sm text-white placeholder-white/30 outline-none focus:border-primary transition-colors"
+                />
+                <motion.button
+                  onClick={subscribe}
+                  disabled={status === 'loading'}
+                  whileHover={{ scale: 1.04, boxShadow: '0 6px 24px rgba(79,70,229,0.5)' }}
+                  whileTap={{ scale: 0.97 }}
+                  className="font-heading font-700 text-sm text-white bg-primary px-5 py-2.5 rounded-xl shadow-glow whitespace-nowrap disabled:opacity-50"
+                >
+                  {status === 'loading' ? '...' : 'Abone Ol'}
+                </motion.button>
+              </>
+            )}
           </div>
         </div>
 
